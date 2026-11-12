@@ -23,6 +23,16 @@ Si un nodo deja de transmitir durante cinco segundos, esa ficha cambia automáti
 
 ## Inicio rápido
 
+### Inicio automático en Windows
+
+1. Descarga el repositorio y descomprímelo.
+2. Instala [Python 3](https://www.python.org/downloads/) y [Node.js LTS](https://nodejs.org/) si todavía no están instalados.
+3. Haz doble clic en **`INICIAR PROGRAMA.bat`**.
+
+El iniciador instala las dependencias durante la primera ejecución, levanta el backend y el frontend y abre automáticamente `http://localhost:5173` en el navegador.
+
+### Inicio manual
+
 1. Instala las dependencias una sola vez:
 
    ```powershell
