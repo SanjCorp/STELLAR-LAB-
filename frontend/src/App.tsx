@@ -5,6 +5,7 @@ import ProfilePicker from './ProfilePicker'
 import CrewCommand from './CrewCommand'
 import SettingsPanel from './SettingsPanel'
 import { profiles, type CrewProfile } from './profiles'
+import { apiFetch } from './api'
 
 type Sample = {
   astronaut_id: string; source: 'simulation' | 'hardware'; received_at: string; ecg_raw: number; leads_off: boolean;
@@ -41,7 +42,7 @@ export default function App() {
     const astronautId = profile.id
     const refresh = async () => {
       try {
-        const [stateRes, historyRes] = await Promise.all([fetch(`/api/state?astronaut_id=${astronautId}`), fetch(`/api/history?astronaut_id=${astronautId}&limit=90`)])
+        const [stateRes, historyRes] = await Promise.all([apiFetch(`/api/state?astronaut_id=${astronautId}`), apiFetch(`/api/history?astronaut_id=${astronautId}&limit=90`)])
         if (!stateRes.ok || !historyRes.ok) throw new Error('API unavailable')
         const state = await stateRes.json(); const history = await historyRes.json()
         if (alive) { setSample(state); setSeries(history.items); setConnected(true) }

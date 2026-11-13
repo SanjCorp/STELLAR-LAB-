@@ -25,3 +25,4 @@
 .detail-avatar{width:52px;height:52px}
 .switch-profile>img{width:30px;height:30px;border-radius:50%;object-fit:cover;object-position:center 18%;border:1px solid #35576d}
 
+.login-box{max-width:420px}.login-box form{display:grid;gap:12px;margin-top:26px}.login-box input{width:100%;padding:13px 14px;border:1px solid #1d3550;border-radius:8px;background:#08131f;color:#eef6ff;font:15px "Segoe UI",Arial,sans-serif;outline:none}.login-box input:focus{border-color:#4ae0bc}.login-box button{padding:13px;border:0;border-radius:8px;background:#4ae0bc;color:#04121a;font:700 14px "Segoe UI",Arial,sans-serif;cursor:pointer}.login-box button:disabled{opacity:.5;cursor:default}.login-error{color:#ff8a8a!important;font-size:13px}.login-status{margin-top:26px!important}
