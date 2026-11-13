@@ -11,6 +11,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
+from . import supabase_sync
+
 AstronautId = Literal["bresnik", "parmitano", "douglas", "rubio"]
 ASTRONAUTS: dict[str, dict[str, float]] = {
     "bresnik": {"heart": 71, "respiration": 15.4, "movement": 82, "phase": 0.0},
@@ -55,6 +57,26 @@ histories: dict[str, deque[dict]] = {key: deque(maxlen=240) for key in ASTRONAUT
 last_real_packets: dict[str, float] = {key: 0.0 for key in ASTRONAUTS}
 last_real: dict[str, dict | None] = {key: None for key in ASTRONAUTS}
 started = monotonic()
+
+
+def store_history(astronaut_id: str, payload: dict) -> None:
+    """Fila antigua de Supabase: va al historial, pero no cuenta como señal en vivo."""
+    if astronaut_id in histories:
+        histories[astronaut_id].append(payload)
+
+
+def store_live(astronaut_id: str, payload: dict) -> None:
+    """Paquete nuevo del hardware (vía POST local o vía Supabase)."""
+    if astronaut_id not in histories:
+        return
+    last_real_packets[astronaut_id] = monotonic()
+    last_real[astronaut_id] = payload
+    histories[astronaut_id].append(payload)
+
+
+@app.on_event("startup")
+def start_supabase_sync() -> None:
+    supabase_sync.start(on_history=store_history, on_live=store_live)
 
 
 def simulated_sample(astronaut_id: str) -> dict:
@@ -121,7 +143,12 @@ def crew_summary(sample: dict) -> dict:
 
 @app.get("/api/health")
 def health() -> dict:
-    return {"status": "ok", "service": "stellar-health-api", "crew_nodes": len(ASTRONAUTS)}
+    return {
+        "status": "ok",
+        "service": "stellar-health-api",
+        "crew_nodes": len(ASTRONAUTS),
+        **supabase_sync.status,
+    }
 
 
 @app.get("/api/state")
@@ -145,7 +172,5 @@ def telemetry(packet: TelemetryIn) -> dict:
     astronaut_id = packet.astronaut_id
     payload = packet.model_dump()
     payload.update(source="hardware", received_at=datetime.now(timezone.utc).isoformat())
-    last_real_packets[astronaut_id] = monotonic()
-    last_real[astronaut_id] = payload
-    histories[astronaut_id].append(payload)
+    store_live(astronaut_id, payload)
     return {"accepted": True, "astronaut_id": astronaut_id, "samples": len(histories[astronaut_id])}
