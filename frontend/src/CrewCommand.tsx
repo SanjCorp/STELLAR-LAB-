@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { CrewProfile } from './profiles'
+import { apiFetch } from './api'
 
 type CrewMetric = {
   astronaut_id: string
@@ -27,7 +28,7 @@ export default function CrewCommand({ crew }: { crew: CrewProfile[] }) {
     let alive = true
     const refresh = async () => {
       try {
-        const response = await fetch('/api/crew')
+        const response = await apiFetch('/api/crew')
         if (!response.ok) throw new Error('Crew API unavailable')
         const payload = await response.json() as { items: CrewMetric[] }
         if (alive) setMetrics(current => ({ ...current, ...Object.fromEntries(payload.items.map(item => [item.astronaut_id, item])) }))
