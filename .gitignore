@@ -1,0 +1,16 @@
+.qa/
+.venv/
+__pycache__/
+*.pyc
+node_modules/
+dist/
+*.tsbuildinfo
+.env
+**/secrets.h
+*.backup.ino
+.arduino-build*/
+.arduino-cli-install.yaml
+.worktrees/
+.DS_Store
+
+.vercel

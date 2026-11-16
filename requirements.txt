@@ -1,0 +1,4 @@
+# Dependencias de la función de Python en Vercel (api/index.py).
+# Para correr en local se usa backend/requirements.txt.
+fastapi==0.115.6
+pydantic==2.10.5
